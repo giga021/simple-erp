@@ -1,0 +1,88 @@
+version: '3.4'
+
+services:
+  sql.data:
+    environment:
+      - MYSQL_ROOT_PASSWORD=Pass@word
+    ports:
+      - "3306:3306"
+  eventstore:
+    ports:
+      - "2113:2113"
+      - "1113:1113"
+  rabbitmq:
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  knjizenje.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionString=Server=sql.data;Port=3306;Database=knjizenje;Uid=root;Pwd=Pass@word;"
+      - EVENTSTORE_USERNAME=admin
+      - EVENTSTORE_PASSWORD=changeit
+      - EVENTSTORE_HOST=eventstore
+      - EVENTSTORE_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - SERVICEBUS_USERNAME=guest
+      - SERVICEBUS_PASSWORD=guest
+      - SERVICEBUS_HOST=rabbitmq
+      - MYSQL_VERSION=5.7.22
+    ports:
+      - "80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  pregledi.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionString=Server=sql.data;Port=3306;Database=pregledi;Uid=root;Pwd=Pass@word;"
+      - EVENTSTORE_USERNAME=admin
+      - EVENTSTORE_PASSWORD=changeit
+      - EVENTSTORE_HOST=eventstore
+      - EVENTSTORE_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - SERVICEBUS_USERNAME=guest
+      - SERVICEBUS_PASSWORD=guest
+      - SERVICEBUS_HOST=rabbitmq
+      - IDENTITY_HOST=http://10.0.75.1:57360
+      - API_NAME=knjizenje
+      - MYSQL_VERSION=5.7.22
+    ports:
+      - "80"
+
+  erp.spa:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44397
+      - "ConnectionString=Server=sql.data;Port=3306;Database=web;Uid=root;Pwd=Pass@word;"
+      - SERVICEBUS_USERNAME=guest
+      - SERVICEBUS_PASSWORD=guest
+      - SERVICEBUS_HOST=rabbitmq
+      - PREGLEDI_HOST=http://pregledi.api
+      - IDENTITY_HOST=http://10.0.75.1:57360
+      - API_NAME=knjizenje
+      - MYSQL_VERSION=5.7.22
+    ports:
+      - "8081:80"
+      - "44397:443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  identity.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44317
+      - "ConnectionStringUsers=Server=sql.data;Port=3306;Database=identity_users;Uid=root;Pwd=Pass@word;"
+      - "ConnectionStringClients=Server=sql.data;Port=3306;Database=identity_clients;Uid=root;Pwd=Pass@word;"
+      - "ConnectionStringGrants=Server=sql.data;Port=3306;Database=identity_grants;Uid=root;Pwd=Pass@word;"
+      - MYSQL_VERSION=5.7.22
+    ports:
+      - "57360:80"
+      - "44317:443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

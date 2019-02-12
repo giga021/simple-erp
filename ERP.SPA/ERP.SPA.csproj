@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>F4193484-B228-4215-AAE8-A34817963397</UserSecretsId>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <IsPackable>false</IsPackable>
+    <SpaRoot>js\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="js\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.0" />
+    <PackageReference Include="IdentityServer4" Version="2.3.0" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
+    <PackageReference Include="MassTransit" Version="5.1.5" />
+    <PackageReference Include="MassTransit.Autofac" Version="5.1.5" />
+    <PackageReference Include="MassTransit.Extensions.Logging" Version="5.1.5" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="5.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="2.1.1" />
+    <PackageReference Include="Polly" Version="6.1.0" />
+    <PackageReference Include="Polly.Extensions.Http" Version="2.0.1" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+     Don't publish the SPA source files, but do show them in the project files list 
+    <Content Remove="$(SpaRoot)**" />
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>-->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Integration.Contracts\Integration.Contracts.csproj" />
+  </ItemGroup>
+
+   <!--<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    As part of publishing, ensure the JS resources are freshly built in production mode 
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+
+     Include the newly-built files in the publish output 
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)build\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>-->
+
+</Project>

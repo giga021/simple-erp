@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  sql.data:
+    image: mysql:5.7.22
+  eventstore:
+    image: eventstore/eventstore:release-4.1.0
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  knjizenje.api:
+    image: knjizenjeapi
+    build:
+      context: .
+      dockerfile: Knjizenje.Service/Dockerfile
+    depends_on:
+      - sql.data
+      - eventstore
+      - rabbitmq
+
+  pregledi.api:
+    image: preglediapi
+    build:
+      context: .
+      dockerfile: Pregledi.API/Dockerfile
+    depends_on:
+      - sql.data
+      - eventstore
+      - rabbitmq
+
+  erp.spa:
+    image: erpspa
+    build:
+      context: .
+      dockerfile: ERP.SPA/Dockerfile
+    depends_on:
+      - sql.data
+      - pregledi.api
+      - knjizenje.api
+      - rabbitmq
+
+  identity.api:
+    image: identityapi
+    build:
+      context: .
+      dockerfile: Identity/Dockerfile
+    depends_on:
+      - sql.data

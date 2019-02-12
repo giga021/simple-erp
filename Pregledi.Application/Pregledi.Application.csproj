@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="5.1.5" />
+    <PackageReference Include="MediatR" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Integration.Contracts\Integration.Contracts.csproj" />
+    <ProjectReference Include="..\Pregledi.Domain\Pregledi.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="StoredProcedures\**" />
+    <EmbeddedResource Remove="StoredProcedures\**" />
+    <None Remove="StoredProcedures\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.Migrations.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.Migrations.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EventStore.ClientAPI.NetCore" Version="4.1.0.23" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pregledi.Application\Pregledi.Application.csproj" />
+    <ProjectReference Include="..\Pregledi.Domain\Pregledi.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="EventSourcing\Projections\Nalozi.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

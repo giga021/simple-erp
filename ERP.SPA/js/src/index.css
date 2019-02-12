@@ -1,0 +1,50 @@
+table.stavke-table td {
+  vertical-align: middle;
+}
+
+table.stavke-table .right {
+  text-align: right;
+}
+
+table.stavke-table .stornirana {
+  background: orange;
+}
+
+table.stavke-table .uklonjena {
+  background: red;
+}
+
+table.stavke-table {
+  table-layout: fixed;
+}
+
+button.nova-stavka {
+  float: right;
+}
+
+.page-header {
+  text-align: center;
+}
+
+svg.icon{
+  vertical-align: baseline;
+  margin-right: 2px;
+}
+
+.error-toast .error-title{
+  text-align: center;
+}
+
+.error-toast .error-message{
+  word-break: break-all;
+}
+
+.error-toast .error-additional{
+  word-break: break-all;
+  white-space: pre;
+  font-size: 80%;
+}
+
+.ReactTable .rt-td a button {
+  width: 100%;
+}

@@ -1,0 +1,76 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>a0ed56e1-40f1-4f9c-8439-2294ad9ead16</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Certificate\**" />
+    <Compile Remove="Data\Migrations_pgsql\**" />
+    <Compile Remove="Quickstart\Consent\**" />
+    <Compile Remove="Quickstart\Device\**" />
+    <Compile Remove="Quickstart\Diagnostics\**" />
+    <Compile Remove="Quickstart\Grants\**" />
+    <Compile Remove="Views\Consent\**" />
+    <Compile Remove="Views\Device\**" />
+    <Compile Remove="Views\Diagnostics\**" />
+    <Compile Remove="Views\Grants\**" />
+    <Content Remove="Certificate\**" />
+    <Content Remove="Data\Migrations_pgsql\**" />
+    <Content Remove="Quickstart\Consent\**" />
+    <Content Remove="Quickstart\Device\**" />
+    <Content Remove="Quickstart\Diagnostics\**" />
+    <Content Remove="Quickstart\Grants\**" />
+    <Content Remove="Views\Consent\**" />
+    <Content Remove="Views\Device\**" />
+    <Content Remove="Views\Diagnostics\**" />
+    <Content Remove="Views\Grants\**" />
+    <EmbeddedResource Remove="Certificate\**" />
+    <EmbeddedResource Remove="Data\Migrations_pgsql\**" />
+    <EmbeddedResource Remove="Quickstart\Consent\**" />
+    <EmbeddedResource Remove="Quickstart\Device\**" />
+    <EmbeddedResource Remove="Quickstart\Diagnostics\**" />
+    <EmbeddedResource Remove="Quickstart\Grants\**" />
+    <EmbeddedResource Remove="Views\Consent\**" />
+    <EmbeddedResource Remove="Views\Device\**" />
+    <EmbeddedResource Remove="Views\Diagnostics\**" />
+    <EmbeddedResource Remove="Views\Grants\**" />
+    <None Remove="Certificate\**" />
+    <None Remove="Data\Migrations_pgsql\**" />
+    <None Remove="Quickstart\Consent\**" />
+    <None Remove="Quickstart\Device\**" />
+    <None Remove="Quickstart\Diagnostics\**" />
+    <None Remove="Quickstart\Grants\**" />
+    <None Remove="Views\Consent\**" />
+    <None Remove="Views\Device\**" />
+    <None Remove="Views\Diagnostics\**" />
+    <None Remove="Views\Grants\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Quickstart\Account\ExternalController.cs" />
+    <Compile Remove="Quickstart\TestUsers.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Shared\_ScopeListItem.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityServer4" Version="2.3.0" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.3.0" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.0.100" />
+    <PackageReference Include="MediatR" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Knjizenje.Domain\Knjizenje.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
