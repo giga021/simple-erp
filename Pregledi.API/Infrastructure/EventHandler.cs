@@ -48,14 +48,14 @@ namespace Pregledi.Persistence
 
 		public async Task HandleAsync(ResolvedEvent evnt)
 		{
-			if (eventTypes.Value.ContainsKey(evnt.Event.EventType))
+			if (eventTypes.Value.TryGetValue(evnt.Event.EventType, out var type))
 			{
 				if (await processedEventRepo.IsProcessedAsync(evnt.Event.EventStreamId, evnt.Event.EventId))
 					return;
 
 				try
 				{
-					var resolvedEvent = DeserializeEvent(evnt);
+					var resolvedEvent = DeserializeEvent(evnt, type);
 					await mediator.Publish(resolvedEvent);
 					await versionUpdater.UpdateVersionAsync(evnt.Event.EventStreamId, evnt.Event.EventNumber);
 					await PersistEventAsync(evnt);
@@ -69,9 +69,8 @@ namespace Pregledi.Persistence
 			}
 		}
 
-		private EventBase DeserializeEvent(ResolvedEvent evnt)
+		private EventBase DeserializeEvent(ResolvedEvent evnt, Type eventType)
 		{
-			var eventType = eventTypes.Value[evnt.Event.EventType];
 			string dataJson = Encoding.UTF8.GetString(evnt.Event.Data);
 			string metadataJson = Encoding.UTF8.GetString(evnt.Event.Metadata);
 			var resolvedEvent = (EventBase)JsonConvert.DeserializeObject(dataJson, eventType);

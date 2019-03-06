@@ -75,12 +75,18 @@ namespace Knjizenje.Persistence.EventSourcing
 				foreach (var resolvedEvent in currentSlice.Events)
 				{
 					string json = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
-					Type eventType = eventTypes.Value[resolvedEvent.Event.EventType];
-					//Type eventType = Type.GetType(resolvedEvent.Event.EventType);
-					var evnt = (EventBase)JsonConvert.DeserializeObject(json, eventType, jsonSettings);
-					evnt.EventNumber = resolvedEvent.Event.EventNumber;
-					evnt.EventId = resolvedEvent.Event.EventId;
-					ret.Add(evnt);
+					if (eventTypes.Value.TryGetValue(resolvedEvent.Event.EventType, out var eventType))
+					{
+						//Type eventType = Type.GetType(resolvedEvent.Event.EventType);
+						var evnt = (EventBase)JsonConvert.DeserializeObject(json, eventType, jsonSettings);
+						evnt.EventNumber = resolvedEvent.Event.EventNumber;
+						evnt.EventId = resolvedEvent.Event.EventId;
+						ret.Add(evnt);
+					}
+					else
+					{
+						throw new FormatException($"Unknown event type '{resolvedEvent.Event.EventType}'");
+					}
 				}
 			}
 			while (!currentSlice.IsEndOfStream);

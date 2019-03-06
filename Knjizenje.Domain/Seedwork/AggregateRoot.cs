@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Knjizenje.Domain.Seedwork
@@ -10,10 +11,9 @@ namespace Knjizenje.Domain.Seedwork
 		where TEntity : Entity<TKey>
 		where TKey : IAggregateId, IEquatable<TKey>
 	{
-		private static readonly Lazy<Dictionary<Type, MethodInfo>> applyMethods = new Lazy<Dictionary<Type, MethodInfo>>(InitApplyMethods);
-		private static readonly Lazy<ConstructorInfo> constructor = new Lazy<ConstructorInfo>(() =>
-			typeof(TEntity).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-			null, new Type[0], new ParameterModifier[0]));
+		private static readonly Lazy<Dictionary<Type, Action<AggregateRoot<TEntity, TKey>, EventBase>>> applyMethods = new Lazy<Dictionary<Type, Action<AggregateRoot<TEntity, TKey>, EventBase>>>(InitApplyMethods);
+		private static readonly Lazy<Func<AggregateRoot<TEntity, TKey>>> constructor = new Lazy<Func<AggregateRoot<TEntity, TKey>>>(() =>
+			Expression.Lambda<Func<AggregateRoot<TEntity, TKey>>>(Expression.New(typeof(TEntity))).Compile());
 
 		private bool uninitialized = false;
 		private List<EventBase> uncommittedEvents = new List<EventBase>();
@@ -34,23 +34,32 @@ namespace Knjizenje.Domain.Seedwork
 			where TEvent : EventBase
 		{
 			Type eventType = evnt.GetType();
-			if (applyMethods.Value.ContainsKey(eventType))
-			{
-				var apply = applyMethods.Value[eventType];
-				apply.Invoke(this, new[] { evnt });
-			}
+			if (applyMethods.Value.TryGetValue(eventType, out var apply))
+				apply.Invoke(this, evnt);
+
 			if (evnt.EventNumber >= 0)
 				Version = evnt.EventNumber;
+
 			uninitialized = false;
 		}
 
-		private static Dictionary<Type, MethodInfo> InitApplyMethods()
+		private static Dictionary<Type, Action<AggregateRoot<TEntity, TKey>, EventBase>> InitApplyMethods()
 		{
-			return typeof(TEntity).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+			var aggregateParamBase = Expression.Parameter(typeof(AggregateRoot<TEntity, TKey>), "agg");
+			var evntParamBase = Expression.Parameter(typeof(EventBase), "evnt");
+			var methods = typeof(TEntity).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
 				.Where(x => x.Name == "Primeni" &&
 					x.GetParameters().Count() == 1 &&
-					x.GetParameters().Single().ParameterType.IsSubclassOf(typeof(EventBase)))
-				.ToDictionary(x => x.GetParameters().Single().ParameterType, x => x);
+					x.GetParameters().Single().ParameterType.IsSubclassOf(typeof(EventBase)));
+
+			var compiledMethods = new Dictionary<Type, Action<AggregateRoot<TEntity, TKey>, EventBase>>();
+			foreach (var item in methods)
+			{
+				var eventType = item.GetParameters().Single().ParameterType;
+				var doApply = Expression.Call(Expression.Convert(aggregateParamBase, typeof(TEntity)), item, Expression.Convert(evntParamBase, eventType));
+				compiledMethods[eventType] = Expression.Lambda<Action<AggregateRoot<TEntity, TKey>, EventBase>>(doApply, aggregateParamBase, evntParamBase).Compile();
+			}
+			return compiledMethods;
 		}
 
 		public void ClearUncommittedEvents()
@@ -60,10 +69,7 @@ namespace Knjizenje.Domain.Seedwork
 
 		public static AggregateRoot<TEntity, TKey> CreateEmpty()
 		{
-			if (constructor.Value == null)
-				throw new InvalidOperationException($"Parameterless constructor for type {typeof(TEntity).Name} not found");
-
-			var emptyAggregate = (AggregateRoot<TEntity, TKey>)constructor.Value.Invoke(new object[0]);
+			var emptyAggregate = constructor.Value.Invoke();
 			emptyAggregate.uninitialized = true;
 			return emptyAggregate;
 		}

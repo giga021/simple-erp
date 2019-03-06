@@ -13,21 +13,21 @@ namespace Pregledi.Application
 
 	public class NotificationQueue : INotificationQueue
 	{
-		private readonly ConcurrentDictionary<INotification, INotification> notifications;
+		private readonly HashSet<INotification> notifications;
 
 		public NotificationQueue()
 		{
-			this.notifications = new ConcurrentDictionary<INotification, INotification>();
+			this.notifications = new HashSet<INotification>();
 		}
 
 		public void Add(INotification notification)
 		{
-			notifications.AddOrUpdate(notification, notification, (k, v) => notification);
+			notifications.Add(notification);
 		}
 
 		public IEnumerable<INotification> GetAll()
 		{
-			return notifications.Select(x => x.Key).ToList();
+			return notifications.ToList();
 		}
 	}
 }
